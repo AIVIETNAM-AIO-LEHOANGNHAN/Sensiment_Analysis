@@ -103,8 +103,6 @@ MultinomialNB    LogisticRegression
 ```
 ## 6. Công cụ sử dụng
 
-# 🛠️ Tools & Technologies
-
 | Công cụ | Mục đích sử dụng |
 |----------|----------------|
 | Python 3.10 | Ngôn ngữ lập trình chính của dự án |
