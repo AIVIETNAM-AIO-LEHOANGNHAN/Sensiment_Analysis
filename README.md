@@ -101,3 +101,75 @@ MultinomialNB    LogisticRegression
                 ▼
         Final Report
 ```
+## 6. Công cụ sử dụng
+
+# 🛠️ Tools & Technologies
+
+| Công cụ | Mục đích sử dụng |
+|----------|----------------|
+| Python 3.10 | Ngôn ngữ lập trình chính của dự án |
+| Jupyter Notebook | Phân tích dữ liệu, xây dựng và thử nghiệm mô hình |
+| Pandas | Xử lý và phân tích dữ liệu |
+| NumPy | Tính toán số học và xử lý mảng dữ liệu |
+| Matplotlib | Trực quan hóa dữ liệu |
+| Seaborn | Trực quan hóa thống kê và biểu đồ |
+| Scikit-learn | Tiền xử lý dữ liệu, TF-IDF, huấn luyện và đánh giá mô hình |
+| NLTK | Xử lý ngôn ngữ tự nhiên, stopwords |
+| WordCloud | Tạo WordCloud cho từng nhóm cảm xúc |
+| GitHub | Cộng tác phát triển và quản lý mã nguồn |
+| Jira Kanban | Quản lý tiến độ dự án và phân công công việc |
+| Markdown | Viết tài liệu dự án và README |
+
+## 7. Cấu trúc thư mục
+```text
+sentiment-analysis/
+│
+├── data/
+│   ├── raw/
+│   │   └── Reviews.csv
+│   │
+│   ├── processed/
+│   │   ├── cleaned_reviews.csv
+│   │   └── sentiment_reviews.csv
+│   │
+│   └── README_DATA.md
+│
+├── notebooks/
+│   ├── 01_data_understanding_eda.ipynb
+│   ├── 02_preprocessing.ipynb
+│   ├── 03_feature_engineering.ipynb
+│   ├── 04_model_training.ipynb
+│   └── 05_evaluation_visualization.ipynb
+│
+├── src/
+│   ├── preprocessing.py
+│   ├── feature_engineering.py
+│   ├── train_model.py
+│   ├── evaluate_model.py
+│   └── utils.py
+│
+├── reports/
+│   ├── figures/
+│   │   ├── score_distribution.png
+│   │   ├── sentiment_distribution.png
+│   │   ├── review_length_distribution.png
+│   │   ├── confusion_matrix_nb.png
+│   │   ├── confusion_matrix_lr.png
+│   │   ├── wordcloud_positive.png
+│   │   ├── wordcloud_neutral.png
+│   │   └── wordcloud_negative.png
+│   │
+│   └── final_report.pdf
+│
+├── docs/
+│   ├── project_plan.md
+│   ├── meeting_notes.md
+│   └── presentation.pptx
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+## 7. Sản phẩm đầu ra
+- File notebook chứa source code
+- File tiểu luận pdf (final_report.pdf)
