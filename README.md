@@ -32,10 +32,72 @@ Xây dựng hệ thống phân tích cảm xúc đánh giá sản phẩm dựa t
 [1]: https://huggingface.co/datasets/jhan21/amazon-food-reviews-dataset?utm_source=chatgpt.com "jhan21/amazon-food-reviews-dataset · Datasets at Hugging Face"
 
 ## 4. Phân công vai trò
-# 👥 Team Members & Roles
 
 | Thành viên        | Vai trò                           | Trách nhiệm                                                                                                                                                                                                                           |
 | ----------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lê Hoàng Nhân** | **Tech Leader & QA/QC**           | Quản lý tiến độ dự án trên Jira Kanban, quản lý GitHub Repository, phân công công việc, review Pull Request, kiểm thử chất lượng dữ liệu và mô hình, đánh giá kết quả thực nghiệm, tổng hợp báo cáo và hoàn thiện sản phẩm cuối cùng. |
-| **Thành viên 2**  | **AI Engineer Data (AIE Data)**   | Thu thập dữ liệu, mô tả dataset, thực hiện EDA, kiểm tra dữ liệu khuyết thiếu và dữ liệu trùng lặp, xây dựng nhãn cảm xúc, tiền xử lý văn bản và trực quan hóa dữ liệu.                                                               |
-| **Thành viên 3**  | **AI Engineer Model (AIE Model)** | Trích xuất đặc trưng TF-IDF, xây dựng và huấn luyện mô hình Multinomial Naive Bayes và Logistic Regression, thực hiện các thí nghiệm Unigram và Bigram, hỗ trợ phân tích kết quả và trực quan hóa WordCloud.                          |
+| **Lê Hoàng Nhân** | **Tech Leader và QA/QC**           | Quản lý tiến độ dự án trên Jira Kanban, quản lý GitHub Repository, phân công công việc, review Pull Request, kiểm thử chất lượng dữ liệu và mô hình, đánh giá kết quả thực nghiệm, tổng hợp báo cáo và hoàn thiện sản phẩm cuối cùng. |
+| **Nguyễn Thị Thu Hiền**  | **AI Engineer Data (AIE Data)**   | Thu thập dữ liệu, mô tả dataset, thực hiện EDA, kiểm tra dữ liệu khuyết thiếu và dữ liệu trùng lặp, xây dựng nhãn cảm xúc, tiền xử lý văn bản và trực quan hóa dữ liệu.                                                               |
+| **Nguyễn Quốc Bảo**  | **AI Engineer Model (AIE Model)** | Trích xuất đặc trưng TF-IDF, xây dựng và huấn luyện mô hình Multinomial Naive Bayes và Logistic Regression, thực hiện các thí nghiệm Unigram và Bigram, hỗ trợ phân tích kết quả và trực quan hóa WordCloud.                          |
+
+## 5. Pipeline dự án
+```text
+Amazon Fine Food Reviews Dataset
+                │
+                ▼
+      Data Understanding
+      (Khảo sát dữ liệu)
+                │
+                ▼
+              EDA
+  (Missing, Duplicate, Distribution)
+                │
+                ▼
+      Label Construction
+(Score → Positive/Neutral/Negative)
+                │
+                ▼
+        Text Preprocessing
+ ├─ Remove HTML Tags
+ ├─ Lowercase
+ ├─ Remove Punctuation
+ ├─ Remove Stopwords
+ └─ Text Cleaning
+                │
+                ▼
+      Feature Engineering
+           TF-IDF
+     ├─ Unigram
+     └─ Bigram
+                │
+                ▼
+         Train/Test Split
+                │
+      ┌─────────┴─────────┐
+      ▼                   ▼
+MultinomialNB    LogisticRegression
+      │                   │
+      └─────────┬─────────┘
+                ▼
+        Model Evaluation
+ ├─ Accuracy
+ ├─ Precision
+ ├─ Recall
+ ├─ Macro F1-score
+ └─ Confusion Matrix (3×3)
+                │
+                ▼
+      Model Comparison
+ ├─ NB vs LR
+ └─ Unigram vs Bigram
+                │
+                ▼
+       Result Analysis
+ ├─ Top Positive Words
+ ├─ Top Negative Words
+ ├─ WordCloud Positive
+ ├─ WordCloud Neutral
+ └─ WordCloud Negative
+                │
+                ▼
+        Final Report
+```
