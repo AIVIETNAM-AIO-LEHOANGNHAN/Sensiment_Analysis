@@ -168,6 +168,6 @@ sentiment-analysis/
 ├── README.md
 └── .gitignore
 ```
-## 7. Sản phẩm đầu ra
+## 8. Sản phẩm đầu ra
 - File notebook chứa source code
 - File tiểu luận pdf (final_report.pdf)
