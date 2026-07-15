@@ -1,0 +1,215 @@
+# 1. Làm sạch dữ liệu
+
+## 1.1. Kiểm tra dữ liệu
+
+### 1.1.1. Đọc và in ra tên hàng, tên cột
+
+```{python}
+# |echo : True
+import pandas as pd
+df = pd.read_csv("reviews.csv")
+print(f'Số dòng: {len(df):,}')
+print(f'Số cột: {len(df.columns)}')
+print()
+print('Tên các cột:')
+print(df.columns.tolist())
+```
+
+### 1.1.2. In ra 5 dòng đầu tiên
+
+```{python}
+# | echo : True
+df.head(5)
+```
+
+### 1.1.3. In ra missing value
+
+```{python}
+# | echo : True
+df = df[['reviews.text', 'reviews.rating']].copy()
+
+print('Thống kê 2 cột cần dùng:')
+print(df.info())
+print()
+print('Số giá trị null:')
+print(df.isnull().sum())
+```
+
+## 1.2. Làm sạch dữ liệu
+
+### 1.2.1. Xóa dòng không có nội dung hoặc rating
+```{python}
+df = df.dropna(subset=['reviews.text', 'reviews.rating'])
+```
+### 1.2.2. Xóa missing value, Chuyển rating sang kiểu số
+
+```{python}
+df['reviews.rating'] = pd.to_numeric(df['reviews.rating'], errors='coerce')
+df = df.dropna(subset=['reviews.rating'])
+df['reviews.rating'] = df['reviews.rating'].astype(int)
+
+print(f'Số dòng sau khi xóa null: {len(df):,}')
+print()
+print('Phân phối rating:')
+print(df['reviews.rating'].value_counts().sort_index())
+```
+
+### 1.2.3. Build hàm clean_text() làm sạch văn bản
+
+```{python}
+import re
+import nltk
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+
+stop_words = set(stopwords.words('english'))
+
+def clean_text(text):
+    """
+    Pipeline làm sạch văn bản gồm 5 bước:
+    1. Xóa HTML tags (vd: <br/>, <p>, &amp;)
+    2. Xóa ký tự đặc biệt, chỉ giữ chữ cái
+    3. Chuyển về chữ thường (lowercase)
+    4. Loại stop words (the, is, at, ...)
+    5. Ghép lại thành chuỗi
+    """
+    # Bước 1: Xóa HTML tags
+    text = re.sub(r'<.*?>', ' ', str(text))
+    # Bước 2: Xóa ký tự đặc biệt
+    text = re.sub(r'[^a-zA-Z\s]', ' ', text)
+    # Bước 3: Lowercase
+    text = text.lower()
+    # Bước 4: Loại stop words
+    tokens = text.split()
+    tokens = [w for w in tokens if w not in stop_words and len(w) > 1]
+    # Bước 5: Ghép lại
+    return ' '.join(tokens)
+
+print('Hàm clean_text() đã sẵn sàng!')
+```
+
+### 1.2.4. Test case hàm clean_text()
+
+```{python}
+examples = [
+    "<br/>This is a GREAT product!! I love it :)",
+    "Terrible quality... waste of money!!! 100% NOT recommended.",
+    "It's okay, nothing special about this product."
+]
+
+print('=== Kiểm tra hàm clean_text() ===')
+for i, ex in enumerate(examples, 1):
+    print(f'\nVí dụ {i}:')
+    print(f'  Trước: {ex}')
+    print(f'  Sau:   {clean_text(ex)}')
+```
+
+### 1.2.5. Áp dụng hàm clean_text cho dataset
+
+```{python}
+# Áp dụng lên toàn bộ dataset
+print('Đang làm sạch văn bản... (vui lòng chờ)')
+
+df['clean_text'] = df['reviews.text'].apply(clean_text)
+
+# Xóa các dòng sau khi làm sạch bị rỗng
+df = df[df['clean_text'].str.strip() != '']
+
+print(f'Hoàn thành! Số dòng còn lại: {len(df):,}')
+
+# Kiểm tra kết quả: xem 5 cặp trước/sau
+print('=== 5 ví dụ trước/sau làm sạch ===')
+for i, row in df.head(5).iterrows():
+    print(f'\nDòng {i}:')
+    print(f'  Trước: {str(row["reviews.text"])[:100]}...')
+    print(f'  Sau:   {row["clean_text"][:100]}...')
+```
+
+## 1.3. Gán nhãn 3 lớp cảm xúc
+
+### 1.3.1. Build hàm assign_label() gán nhãn 3 lớp cảm xúc
+```{python}
+def assign_label(rating):
+    """
+    Chuyển rating số thành nhãn cảm xúc:
+    - 4, 5 sao  → Positive
+    - 3 sao     → Neutral
+    - 1, 2 sao  → Negative
+    """
+    if rating >= 4:
+        return 'Positive'
+    elif rating == 3:
+        return 'Neutral'
+    else:
+        return 'Negative'
+
+df['label'] = df['reviews.rating'].apply(assign_label)
+
+print('Phân phối nhãn:')
+print(df['label'].value_counts())
+print()
+print('Tỉ lệ (%):')
+print((df['label'].value_counts(normalize=True) * 100).round(1))
+```
+
+### 1.3.2. Vẽ biểu đồ trực quan phân phối 3 lớp nhãn 
+
+```{python}
+import matplotlib.pyplot as plt
+
+counts = df['label'].value_counts()
+colors = ['#2ecc71', '#95a5a6', '#e74c3c']
+
+plt.figure(figsize=(7, 4))
+bars = plt.bar(counts.index, counts.values, color=colors, width=0.5)
+plt.title('Phân phối nhãn cảm xúc', fontsize=14)
+plt.xlabel('Nhãn')
+plt.ylabel('Số lượng review')
+
+# Hiển thị số lượng trên đầu mỗi cột
+for bar, val in zip(bars, counts.values):
+    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 100,
+             f'{val:,}', ha='center', va='bottom', fontsize=11)
+
+plt.tight_layout()
+plt.savefig('reports/label_distribution.png', dpi=150)
+plt.show()
+print('Đã lưu: reports/label_distribution.png')
+```
+
+### 1.3.3. Nhận xét
+
+```{python}
+# Nhận xét về phân phối nhãn
+total = len(df)
+for label in ['Positive', 'Neutral', 'Negative']:
+    count = (df['label'] == label).sum()
+    pct = count / total * 100
+    print(f'{label:10s}: {count:>6,} reviews ({pct:.1f}%)')
+
+print()
+print('=> Nhận xét: Dữ liệu bị mất cân bằng lớp (imbalanced).')
+print('   Nhóm Positive chiếm đa số, Neutral rất ít.')
+print('   Vì vậy cần dùng Macro F1 thay vì Accuracy để đánh giá mô hình.')
+```
+
+### 1.3.4. Lưu kết quả
+
+```{python}
+import os
+
+# Tạo thư mục nếu chưa có
+os.makedirs('data', exist_ok=True)
+os.makedirs('reports', exist_ok=True)
+
+# Lưu file với 3 cột cần thiết cho các bước tiếp theo
+df_output = df[['reviews.text', 'clean_text', 'reviews.rating', 'label']]
+df_output.to_csv('data/reviews_labeled.csv', index=False)
+
+print(f'Đã lưu: data/reviews_labeled.csv')
+print(f'Số dòng: {len(df_output):,}')
+print(f'Số cột: {len(df_output.columns)}')
+print()
+print('Xem trước file output:')
+df_output.head(3)
+```
